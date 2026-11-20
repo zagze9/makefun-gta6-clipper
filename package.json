@@ -1,0 +1,1 @@
+{"description": "make.fun bounty gta6-clipper-01 entry: vertical GTA VI Trailer 2 short (Jason meets Lucia) rendered from cut.json", "name": "makefun-gta6-clipper", "private": true, "scripts": {"start": "node main.ts"}, "type": "module"}

@@ -1,0 +1,116 @@
+{
+  "comment": "Reproduction parameters for the vertical short in this repo. The source trailer is the official Rockstar Games GTA VI Trailer 2 (May 2025). The chosen moment is the prison pickup scene where Jason Duval asks for Lucia Camino (dialogue: 'I'm here for Lucia Camino. She's supposed to be getting out. What's your name? Jason Duval.'). The frame is laid out as a blur-fill vertical: the full 1920x1080 trailer frame is scaled to fit 1080 wide (no horizontal content cut) and centered over a blurred, darkened fill so nothing important is cropped away.",
+  "competition": "gta6-clipper-01",
+  "source": {
+    "title": "Grand Theft Auto VI Trailer 2",
+    "uploader": "Rockstar Games",
+    "url": "https://www.youtube.com/watch?v=VQRLujxTm3c",
+    "youtube_id": "VQRLujxTm3c",
+    "downloaded_as": "gta6-trailer2.mp4 (1080p av1 mp4, 166.8s)"
+  },
+  "cut": {
+    "start_seconds": 47.0,
+    "end_seconds": 69.2,
+    "duration_seconds": 22.2,
+    "why": "Scene runs from the golden-hour prison approach (~46s transition point, verified by per-frame luma) until the fade to the 'ROCKSTAR GAMES PRESENTS' card (fade begins ~69.3s). Dialogue 'I'm here for Lucia Camino' lands at ~52s and the reunion 'Hey.' at ~68s."
+  },
+  "output": {
+    "width": 1080,
+    "height": 1920,
+    "fps": "source",
+    "layout": "blur-fill: full trailer frame scaled to 1080x608, centered at y=656; background is the frame scaled to 1080x1920, gblur sigma=45, darkened -0.08"
+  },
+  "text_lines": [
+    {
+      "text": "GTA 6: how Jason met Lucia",
+      "start": 0.0,
+      "end": 5.5,
+      "y": 250,
+      "font_size": 58
+    },
+    {
+      "text": "GTA VI Trailer 2",
+      "start": 5.5,
+      "end": 11.5,
+      "y": 250,
+      "font_size": 44
+    },
+    {
+      "text": "Make clips like this with AI",
+      "start": 11.5,
+      "end": 17.0,
+      "y": 1360,
+      "font_size": 54
+    },
+    {
+      "text": "and earn money on make.fun",
+      "start": 11.5,
+      "end": 17.0,
+      "y": 1455,
+      "font_size": 54
+    },
+    {
+      "text": "make.fun/bounty/gta6-clipper-01",
+      "start": 17.0,
+      "end": 22.2,
+      "y": 1408,
+      "font_size": 52
+    }
+  ],
+  "text_style": {
+    "font": "Noto Sans Bold",
+    "fontfile": "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf",
+    "fontcolor": "white",
+    "border": "3px black@0.9",
+    "box": "black@0.45 (top) / black@0.5 (pitch), boxborderw 16-18",
+    "alignment": "horizontally centered, x=(w-text_w)/2",
+    "safe_area": "All text is in the vertical safe area: away from the right-edge action buttons (y 900-1500 at x>880) and the bottom title/description overlay (y>1620)."
+  },
+  "footage": {
+    "file": "gta6-trailer2.mp4",
+    "resolution": "1920x1080",
+    "candidates": [
+      "../../scratch/gta6-clipper-footage/gta6-trailer2.mp4",
+      "footage/gta6-trailer2.mp4"
+    ],
+    "note": "Footage is NOT committed to this repo. main.ts only renders when one of these candidate paths exists."
+  },
+  "ffmpeg": {
+    "input_flags_prefix": [],
+    "filter_complex": "[0:v]split=2[bg][fg];[bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,gblur=sigma=45,eq=brightness=-0.08[bgb];[fg]scale=1080:-2[fgs];[bgb][fgs]overlay=0:656[v0];[v0]drawtext=fontfile=/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf:text='GTA 6\\: how Jason met Lucia':fontsize=58:fontcolor=white:borderw=3:bordercolor=black@0.9:box=1:boxcolor=black@0.45:boxborderw=16:x=(w-text_w)/2:y=250:enable='between(t,0,5.5)',drawtext=fontfile=/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf:text='GTA VI Trailer 2':fontsize=44:fontcolor=white:borderw=3:bordercolor=black@0.9:box=1:boxcolor=black@0.45:boxborderw=16:x=(w-text_w)/2:y=250:enable='between(t,5.5,11.5)',drawtext=fontfile=/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf:text='Make clips like this with AI':fontsize=54:fontcolor=white:borderw=3:bordercolor=black@0.9:box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=1360:enable='between(t,11.5,17)',drawtext=fontfile=/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf:text='and earn money on make.fun':fontsize=54:fontcolor=white:borderw=3:bordercolor=black@0.9:box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=1455:enable='between(t,11.5,17)',drawtext=fontfile=/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf:text='make.fun/bounty/gta6-clipper-01':fontsize=52:fontcolor=white:borderw=3:bordercolor=black@0.9:box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=1408:enable='between(t,17,22.2)'[vout]",
+    "video_flags": [
+      "-c:v",
+      "libx264",
+      "-preset",
+      "medium",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p"
+    ],
+    "audio_flags": [
+      "-c:a",
+      "aac",
+      "-b:a",
+      "192k"
+    ],
+    "determinism_flags": [
+      "-fflags",
+      "+bitexact",
+      "-flags:v",
+      "+bitexact",
+      "-flags:a",
+      "+bitexact",
+      "-threads:v",
+      "1",
+      "-threads:a",
+      "1"
+    ],
+    "container_flags": [
+      "-movflags",
+      "+faststart"
+    ],
+    "creation_time": "1970-01-01T00:00:00Z",
+    "note": "bitexact + single-threaded encode + fixed creation_time make two runs write byte-identical MP4s."
+  }
+}
