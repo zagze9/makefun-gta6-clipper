@@ -13,7 +13,7 @@
 //      silently and the program still exits 0 after step 1.
 
 import { spawnSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, statSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -80,6 +80,9 @@ function findFootage(spec: CutSpec): string | null {
 function renderShort(spec: CutSpec, footagePath: string, outPath: string): boolean {
   const start = spec.cut.start_seconds;
   const duration = spec.cut.end_seconds - spec.cut.start_seconds;
+  // Render to a temp file first and only publish it on success, so a failed
+  // or interrupted encode can never leave a truncated mp4 at the final path.
+  const tmpPath = `${outPath}.part`;
   const args = [
     "-y",
     ...spec.ffmpeg.input_flags_prefix,
@@ -99,12 +102,36 @@ function renderShort(spec: CutSpec, footagePath: string, outPath: string): boole
     ...spec.ffmpeg.audio_flags,
     ...spec.ffmpeg.determinism_flags,
     ...spec.ffmpeg.container_flags,
+    "-f",
+    "mp4",
     "-metadata",
     `creation_time=${spec.ffmpeg.creation_time}`,
-    outPath,
+    tmpPath,
   ];
   const run = spawnSync("ffmpeg", args, { stdio: ["ignore", "ignore", "ignore"] });
-  return run.error === undefined && run.status === 0;
+  if (run.error !== undefined || run.status !== 0) {
+    try {
+      if (existsSync(tmpPath)) unlinkSync(tmpPath);
+    } catch {
+      // best-effort cleanup only
+    }
+    return false;
+  }
+  let ok = false;
+  try {
+    ok = existsSync(tmpPath) && statSync(tmpPath).size > 0;
+    if (ok) renameSync(tmpPath, outPath);
+  } catch {
+    ok = false;
+  }
+  if (!ok) {
+    try {
+      if (existsSync(tmpPath)) unlinkSync(tmpPath);
+    } catch {
+      // best-effort cleanup only
+    }
+  }
+  return ok;
 }
 
 function main(): void {
